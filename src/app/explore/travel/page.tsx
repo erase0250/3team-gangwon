@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -23,9 +25,9 @@ const TravelPage: React.FC = () => {
 
    // URL 변경 함수 (props로 전달)
    const handleUrlChange = (selectedParam: SelectedParam) => {
-      let queryString = `?cat=${selectedParam.cat}&page=${selectedParam.page}`
-      if(selectedParam.filter){
-            queryString += `&filter=${selectedParam.filter}`
+      let queryString = `?cat=${selectedParam.cat}&page=${selectedParam.page}`;
+      if (selectedParam.filter) {
+         queryString += `&filter=${selectedParam.filter}`;
       }
       router.replace(queryString, { scroll: false });
       setSelected(selectedParam);
@@ -33,7 +35,6 @@ const TravelPage: React.FC = () => {
 
    // 기본 파라미터 설정 (cat이 없을 경우 season으로 설정)
    useEffect(() => {
-
       if (!nowCategory) {
          console.log("🔄 기본 카테고리 'season' 적용");
          setSelected({ cat: "season", page: 1 });
@@ -43,7 +44,7 @@ const TravelPage: React.FC = () => {
 
       // 올바른 카테고리 값인지 확인 후 설정
       if (["season", "region", "nature", "culture"].includes(nowCategory)) {
-         setSelected({ cat: nowCategory, filter: nowFilter, page: nowPage || 1});
+         setSelected({ cat: nowCategory, filter: nowFilter, page: nowPage || 1 });
       }
    }, [nowCategory, nowFilter, nowPage]);
 
@@ -51,10 +52,10 @@ const TravelPage: React.FC = () => {
       <div className="min-h-screen">
          <Header />
          <TourSearchBar selected={selected} changeUrl={handleUrlChange} />
-         <CardList 
-            key={`${selected.cat}-${selected.page}-${selected.filter}`} 
-            selected={selected} 
-            changeUrl={handleUrlChange} 
+         <CardList
+            key={`${selected.cat}-${selected.page}-${selected.filter}`}
+            selected={selected}
+            changeUrl={handleUrlChange}
          />
 
          <Footer />
@@ -63,4 +64,3 @@ const TravelPage: React.FC = () => {
 };
 
 export default TravelPage;
-

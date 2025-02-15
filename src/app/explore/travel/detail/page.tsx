@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
@@ -13,7 +15,6 @@ import { TourImg, TourDetailInfo, CatList } from "@/types/types";
 import APIConnect from "@/utils/api";
 import catListJson from "@/utils/catList.json";
 import { getCookie, setCookie } from "@/utils/cookie";
-
 
 const catList = catListJson as CatList;
 
@@ -256,7 +257,7 @@ const TravelListPage: React.FC = () => {
             {/* 위치 */}
             <section>
                <h3 className="text-2xl font-bold mb-6">위치</h3>
-               {(infoList?.mapx && infoList?.mapy)? (
+               {infoList?.mapx && infoList?.mapy ? (
                   <div className="h-[500px]">
                      <KakaoMap mapx={infoList.mapx} mapy={infoList.mapy} title={infoList.title} />
                   </div>
@@ -264,7 +265,6 @@ const TravelListPage: React.FC = () => {
                   "지도 정보 없음"
                )}
             </section>
-
          </main>
          <Footer />
       </div>

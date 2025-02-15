@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 

@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import { AxiosResponse } from "axios";
 import Image from "next/image";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
@@ -9,7 +11,6 @@ import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import { checkAuthUser } from "@/utils/authapi";
 import { getPostById, updatePost } from "@/utils/postapi";
-
 
 interface Post {
    _id: string;
@@ -71,7 +72,6 @@ export default function EditPostPage() {
          try {
             const response: AxiosResponse<Post> = await getPostById(postId as string);
             setPost(response.data);
-
 
             const parsedTitle = JSON.parse(response.data.title);
 
@@ -137,13 +137,13 @@ export default function EditPostPage() {
             date,
             endDate,
             image,
-            imageToDeletePublicId, 
-            channelId, 
+            imageToDeletePublicId,
+            channelId,
             token,
          );
          if (response.status === 200) {
             alert("게시글이 수정되었습니다.");
-            router.push(`/community/post/${postId}`); 
+            router.push(`/community/post/${postId}`);
          } else {
             throw new Error("게시글 수정 실패");
          }

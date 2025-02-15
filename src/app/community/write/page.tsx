@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import { AxiosResponse, AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -8,17 +10,16 @@ import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import { createPost } from "@/utils/postapi";
 
-
 export default function WritePage() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const channelId = searchParams.get("channelId") || "679f3aba7cd28d7700f70f40";
    const [title, setTitle] = useState("");
    const [content, setContent] = useState("");
-   const [fee, setFee] = useState<number | "">(""); 
-   const [people, setPeople] = useState<number>(1); 
-   const [date, setDate] = useState<string>(""); 
-   const [endDate, setEndDate] = useState<string>(""); 
+   const [fee, setFee] = useState<number | "">("");
+   const [people, setPeople] = useState<number>(1);
+   const [date, setDate] = useState<string>("");
+   const [endDate, setEndDate] = useState<string>("");
    const [image, setImage] = useState<File | null>(null);
    const [preview, setPreview] = useState<string | null>(null);
    const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ export default function WritePage() {
       const value = e.target.value;
 
       if (/^\d*$/.test(value)) {
-         setFee(value === "" ? "" : Number(value)); 
+         setFee(value === "" ? "" : Number(value));
       }
    };
 
@@ -120,7 +121,6 @@ export default function WritePage() {
             setEndDate("");
             setImage(null);
             setPreview(null);
-
 
             router.push(`/community/post/${response.data._id}`);
          } else {

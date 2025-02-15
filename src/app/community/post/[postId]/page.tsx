@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import { AxiosResponse } from "axios";
 import { AxiosError } from "axios";
 import Image from "next/image";
@@ -11,9 +13,6 @@ import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import { checkAuthUser } from "@/utils/authapi";
 import { getPostById, deletePost, createComment, deleteComment } from "@/utils/postapi";
-
-
-
 
 interface Post {
    _id: string;
@@ -184,10 +183,10 @@ export default function PostDetail() {
                      _id: response.data.author._id,
                      fullName: response.data.author.fullName,
                      username: response.data.author.username,
-                     image: response.data.author.image || "", 
+                     image: response.data.author.image || "",
                   }, // 댓글 작성자 정보
-                  comment: response.data.comment, 
-                  createdAt: response.data.createdAt, 
+                  comment: response.data.comment,
+                  createdAt: response.data.createdAt,
                },
             ]);
          } catch (error) {
@@ -223,14 +222,11 @@ export default function PostDetail() {
          return;
       }
 
-
       const confirmDelete = window.confirm("정말로 이 댓글을 삭제하시겠습니까?");
       if (!confirmDelete) return;
 
       try {
-
          const response = await deleteComment(commentId, token);
-
 
          if (response.status === 200) {
             setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));

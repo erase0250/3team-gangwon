@@ -2,6 +2,8 @@
 
 "use client";
 
+export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,7 +16,7 @@ import { PlaceParam } from "@/types/types";
 
 export default function Restaurants() {
    type ExtraType = {
-      detail? : string;
+      detail?: string;
       keyword?: string;
    };
 
@@ -56,12 +58,12 @@ export default function Restaurants() {
 
       // 올바른 카테고리 값인지 확인 후 설정
       if (["restaurants", "accommodations"].includes(nowCategory)) {
-         setSelected({ 
-            cat: nowCategory, 
-            filter: nowFilter, 
-            page: nowPage || 1, 
+         setSelected({
+            cat: nowCategory,
+            filter: nowFilter,
+            page: nowPage || 1,
             detail: nowDetail || "",
-            keyword : nowKeyword || ""
+            keyword: nowKeyword || "",
          });
       }
    }, [nowCategory, nowFilter, nowPage, nowDetail, nowKeyword, router]);
