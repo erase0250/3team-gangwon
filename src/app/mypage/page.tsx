@@ -21,7 +21,11 @@ const MyPage: React.FC = () => {
 
    const [favoriteCount, setFavoriteCount] = useState<number>(0);
    const [visitedCount, setVisitedCount] = useState<number>(0);
-   const storedUserId = getCookie("userId");
+   const [storedUserId, setStoredUserId] = useState<string | null>(null); // ✅ 상태 추가
+
+   useEffect(() => {
+      setStoredUserId(getCookie("userId")); // ✅ useEffect 안에서 실행
+   }, []);
 
    useEffect(() => {
       const fetchUserInfo = async () => {
@@ -197,12 +201,12 @@ const MyPage: React.FC = () => {
                         ) : (
                            <div className="mt-5">
                               <p className="text-gray-700 text-md flex items-center gap-2">
-                                 <i className="bi bi-person-circle text-lg text-gray-600"></i>{" "}
-                                 닉네임 : <span className="text-gray-900">{newUsername}</span>
+                                 <i className="bi bi-person-circle text-lg text-gray-600"></i> 닉네임 :{" "}
+                                 <span className="text-gray-900">{newUsername}</span>
                               </p>
                               <p className="text-gray-600 text-md mt-2 flex items-center gap-2">
-                                 <i className="bi bi-envelope-fill text-lg text-gray-500"></i>{" "}
-                                 이메일 : <span className="text-gray-900">{user?.email}</span>
+                                 <i className="bi bi-envelope-fill text-lg text-gray-500"></i> 이메일 :{" "}
+                                 <span className="text-gray-900">{user?.email}</span>
                               </p>
                            </div>
                         )}

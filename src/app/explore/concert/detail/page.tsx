@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
 
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
 
 import DetailSwiper from "@/components/common/DetailSwiper";
@@ -18,29 +18,31 @@ import { getCookie, setCookie } from "@/utils/cookie";
 
 const catList = catListJson as CatList;
 
-const FestivalDetailPage: React.FC = () => {
-   const params = useSearchParams();
-   const key = Number(params.get("contentId"));
-
-   const blankbox = (
-      <span className="bg-neutral-200 rounded px-24">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-   );
-
-   const swiperRef = useRef<any>(null); // 🔥 Swiper 인스턴스 저장
-   const prevBtnRef = useRef<HTMLButtonElement | null>(null);
-   const nextBtnRef = useRef<HTMLButtonElement | null>(null);
-
+export default function FestivalDetailPage() {
+   const router = useRouter();
+   const [contentId, setContentId] = useState<number | null>(null);
    const [infoList, setInfoList] = useState<TourDetailInfo>();
    const [imgList, setImgList] = useState<TourImg[]>([]);
    const [isFavorite, setIsFavorite] = useState(false);
    const [isVisited, setIsVisited] = useState(false);
 
    useEffect(() => {
-      const loadData = async () => {
-         const infoList: TourDetailInfo = await APIConnect.getFestivalInfo(key);
-         const img = await APIConnect.getTourImg(key);
+      if (router.isReady) {
+         const id = Number(router.query.contentId);
+         if (!isNaN(id)) {
+            setContentId(id);
+         }
+      }
+   }, [router.isReady, router.query]);
 
-         setInfoList(infoList);
+   useEffect(() => {
+      if (!contentId) return;
+
+      const loadData = async () => {
+         const info = await APIConnect.getFestivalInfo(contentId);
+         const img = await APIConnect.getTourImg(contentId);
+
+         setInfoList(info);
          setImgList(img);
       };
 
@@ -241,6 +243,4 @@ const FestivalDetailPage: React.FC = () => {
          <Footer />
       </div>
    );
-};
-
-export default FestivalDetailPage;
+}
