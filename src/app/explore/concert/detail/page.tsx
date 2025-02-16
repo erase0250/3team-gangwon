@@ -114,6 +114,11 @@ export default function FestivalDetailPage() {
       return parts.map((part, idx) => <p key={idx}>{part}</p>);
    };
 
+   // ✅ blankbox 변수를 다시 선언
+   const blankbox = (
+      <span className="bg-neutral-200 rounded px-24">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   );
+
    return (
       <div className="min-h-screen">
          <Header />
