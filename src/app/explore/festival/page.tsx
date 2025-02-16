@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
@@ -12,6 +12,14 @@ import FestivalSearchBar from "@/components/fetival/FestivalSearchBar";
 import { PlaceParam } from "@/types/types";
 
 export default function Festival() {
+   return (
+      <Suspense fallback={<div>Loading...</div>}>
+         <FestivalContent />
+      </Suspense>
+   );
+}
+
+function FestivalContent() {
    type ExtraType = {
       month?: string;
       keyword?: string;
