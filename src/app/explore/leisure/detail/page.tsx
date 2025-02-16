@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서
 
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 import DetailSwiper from "@/components/common/DetailSwiper";
 import Footer from "@/components/common/Footer";
@@ -18,30 +18,21 @@ import { getCookie, setCookie } from "@/utils/cookie";
 
 const catList = catListJson as CatList;
 
-const LeisureDetailPage: React.FC = () => {
+const LeisureDetailPageContent: React.FC = () => {
    const params = useSearchParams();
-   const [key, setKey] = useState<number | null>(null); // ✅ 상태 추가
+   const [key, setKey] = useState<number | null>(null);
 
    useEffect(() => {
-      const contentId = Number(params.get("contentId"));
-      if (!isNaN(contentId)) {
-         setKey(contentId);
+      const contentId = params.get("contentId");
+      if (contentId && !isNaN(Number(contentId))) {
+         setKey(Number(contentId));
       }
-   }, [params]); // ✅ useEffect에서 실행
-
-   const blankbox = (
-      <span className="bg-neutral-200 rounded px-24">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-   );
-
-   const swiperRef = useRef<any>(null);
-   const prevBtnRef = useRef<HTMLButtonElement | null>(null);
-   const nextBtnRef = useRef<HTMLButtonElement | null>(null);
+   }, [params]);
 
    const [infoList, setInfoList] = useState<TourDetailInfo>();
    const [imgList, setImgList] = useState<TourImg[]>([]);
    const [isFavorite, setIsFavorite] = useState(false);
    const [isVisited, setIsVisited] = useState(false);
-   const [stateTrigger, setStateTrigger] = useState(0);
    const [storedUserId, setStoredUserId] = useState<string | null>(null);
 
    useEffect(() => {
@@ -49,6 +40,8 @@ const LeisureDetailPage: React.FC = () => {
    }, []);
 
    useEffect(() => {
+      if (key === null) return;
+
       const loadData = async () => {
          const infoList: TourDetailInfo = await APIConnect.getLeisureInfo(key);
          const img = await APIConnect.getTourImg(key);
@@ -253,4 +246,4 @@ const LeisureDetailPage: React.FC = () => {
    );
 };
 
-export default LeisureDetailPage;
+export default LeisureDetailPageContent;
