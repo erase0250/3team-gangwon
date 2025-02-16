@@ -20,7 +20,14 @@ const catList = catListJson as CatList;
 
 const FestivalDetailPage: React.FC = () => {
    const params = useSearchParams();
-   const key = Number(params.get("contentId"));
+   const [key, setKey] = useState<number | null>(null); // ✅ 상태 추가
+
+   useEffect(() => {
+      const contentId = Number(params.get("contentId"));
+      if (!isNaN(contentId)) {
+         setKey(contentId);
+      }
+   }, [params]); // ✅ useEffect에서 실행
 
    const blankbox = (
       <span className="bg-neutral-200 rounded px-24">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
