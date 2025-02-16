@@ -1,11 +1,12 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import APIConnect from "@/utils/api";
 import catList from "@/utils/catList.json";
-import { getCookie, setCookie } from "@/utils/cookie"; // ✅ setCookie 추가
+import { getCookie, setCookie } from "@/utils/cookie";
 
 const getCategoryName = (cat3) => {
    return catList[cat3]?.cat3 || "카테고리 없음";
@@ -13,9 +14,16 @@ const getCategoryName = (cat3) => {
 
 const VisitedPlaces = ({ updateCounts }) => {
    const [visited, setVisited] = useState([]);
-   const userId = getCookie("userId");
+   const [userId, setUserId] = useState(null); // 🚀 초기값을 null로 설정
 
    useEffect(() => {
+      // ✅ 클라이언트에서 실행되도록 변경
+      setUserId(getCookie("userId"));
+   }, []);
+
+   useEffect(() => {
+      if (!userId) return; // userId가 없으면 fetch 실행 X
+
       const fetchVisited = async () => {
          const storedVisited = JSON.parse(getCookie(`visited_${userId}`) || "[]");
 
@@ -38,6 +46,8 @@ const VisitedPlaces = ({ updateCounts }) => {
    }, [userId]);
 
    const removeVisited = (contentId) => {
+      if (!userId) return; // userId가 없으면 실행 X
+
       // ✅ 쿠키에서 해당 contentId 제거
       const updatedVisited = visited.filter((place) => place.contentid !== contentId);
       setVisited(updatedVisited);
