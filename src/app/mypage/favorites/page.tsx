@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -13,9 +14,16 @@ const getCategoryName = (cat3) => {
 
 const FavoritePlaces = ({ updateCounts }) => {
    const [favorites, setFavorites] = useState([]);
-   const userId = getCookie("userId");
+   const [userId, setUserId] = useState(null); // 🚀 userId 초기값을 null로 설정
 
    useEffect(() => {
+      // 🚀 클라이언트에서 실행되도록 useEffect 안에서 userId 가져오기
+      setUserId(getCookie("userId"));
+   }, []);
+
+   useEffect(() => {
+      if (!userId) return; // userId가 없으면 fetch 실행 X
+
       const fetchFavorites = async () => {
          const storedFavorites = JSON.parse(getCookie(`favorites_${userId}`) || "[]");
 
@@ -38,6 +46,8 @@ const FavoritePlaces = ({ updateCounts }) => {
    }, [userId]);
 
    const removeFavorite = (contentId) => {
+      if (!userId) return;
+
       // ✅ 쿠키에서 해당 contentId 제거
       const updatedFavorites = favorites.filter((place) => place.contentid !== contentId);
       setFavorites(updatedFavorites);
@@ -51,7 +61,7 @@ const FavoritePlaces = ({ updateCounts }) => {
          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <i className="bi bi-heart-fill text-red-500"></i> {/* ❤️ 하트 아이콘 */}
             내가 찜한 장소
-         </h2>{" "}
+         </h2>
          {favorites.length > 0 ? (
             <ul className="space-y-3">
                {favorites.map((place) => (

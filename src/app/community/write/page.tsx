@@ -4,16 +4,25 @@ export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서
 
 import { AxiosResponse, AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
 import { createPost } from "@/utils/postapi";
 
 export default function WritePage() {
+   return (
+      <Suspense fallback={<div>Loading...</div>}>
+         <WritePageContent />
+      </Suspense>
+   );
+}
+
+function WritePageContent() {
    const router = useRouter();
    const searchParams = useSearchParams();
    const channelId = searchParams.get("channelId") || "679f3aba7cd28d7700f70f40";
+
    const [title, setTitle] = useState("");
    const [content, setContent] = useState("");
    const [fee, setFee] = useState<number | "">("");
