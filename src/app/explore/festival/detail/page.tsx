@@ -23,11 +23,11 @@ const FestivalDetailPage: React.FC = () => {
    const [key, setKey] = useState<number | null>(null); // ✅ 상태 추가
 
    useEffect(() => {
-      const contentId = Number(params.get("contentId"));
-      if (!isNaN(contentId)) {
-         setKey(contentId);
+      const contentId = params.get("contentId");
+      if (contentId && !isNaN(Number(contentId))) {
+         setKey(Number(contentId));
       }
-   }, [params]); // ✅ useEffect에서 실행
+   }, [params]); // ✅ useEffect 올바르게 사용
 
    const blankbox = (
       <span className="bg-neutral-200 rounded px-24">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -48,7 +48,10 @@ const FestivalDetailPage: React.FC = () => {
       setStoredUserId(getCookie("userId"));
    }, []);
 
+   // ✅ `key`가 null이 아닐 때만 실행
    useEffect(() => {
+      if (key === null) return;
+
       const loadData = async () => {
          const infoList: TourDetailInfo = await APIConnect.getFestivalInfo(key);
          const img = await APIConnect.getTourImg(key);
@@ -74,7 +77,7 @@ const FestivalDetailPage: React.FC = () => {
          swiperRef.current.navigation.init();
          swiperRef.current.navigation.update();
       }
-   }, [key, storedUserId, stateTrigger]);
+   }, [key, storedUserId, stateTrigger]); // ✅ 중첩되지 않도록 올바르게 정리
 
    // ✅ 찜하기 토글
    const handleFavoriteToggle = () => {
