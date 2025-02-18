@@ -1,13 +1,11 @@
 "use client";
 
-export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+export const dynamic = "force-dynamic"; // ✅ SSR 오류 방지
 
-import { AxiosResponse } from "axios";
-import { AxiosError } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 import Image from "next/image";
-import { useRouter, useParams } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
@@ -42,12 +40,21 @@ interface CommentResponse {
    createdAt: string;
 }
 
+// ✅ Suspense 적용하여 useSearchParams 안전하게 사용
 export default function PostDetail() {
+   return (
+      <Suspense fallback={<div>Loading...</div>}>
+         <PostDetailContent />
+      </Suspense>
+   );
+}
+
+function PostDetailContent() {
    const router = useRouter();
    const params = useParams();
    const postId = params?.postId as string;
    const searchParams = useSearchParams();
-   const channelId = searchParams.get("channelId") || "679f3aba7cd28d7700f70f40"; // 기본값 설정
+   const channelId = searchParams.get("channelId") || "679f3aba7cd28d7700f70f40";
 
    const [post, setPost] = useState<Post | null>(null);
    const [loading, setLoading] = useState(true);
@@ -55,7 +62,6 @@ export default function PostDetail() {
    const [comments, setComments] = useState<CommentResponse[]>([]);
    const [commentContent, setCommentContent] = useState<string>("");
 
-   // 로그인된 사용자와 게시글 작성자 비교하는 useEffect
    useEffect(() => {
       if (typeof window !== "undefined") {
          const token = localStorage.getItem("accessToken");

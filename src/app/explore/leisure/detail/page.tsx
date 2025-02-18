@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서
 
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 
 import DetailSwiper from "@/components/common/DetailSwiper";
 import Footer from "@/components/common/Footer";
@@ -16,10 +16,17 @@ import APIConnect from "@/utils/api";
 import catListJson from "@/utils/catList.json";
 import { getCookie, setCookie } from "@/utils/cookie";
 
-const catList = catListJson as CatList;
+// ✅ Suspense 적용하여 useSearchParams 안전하게 사용
+export default function LeisureDetailPage() {
+   return (
+      <Suspense fallback={<div>Loading...</div>}>
+         <LeisureDetailPageContent />
+      </Suspense>
+   );
+}
 
-const LeisureDetailPageContent: React.FC = () => {
-   const params = useSearchParams();
+function LeisureDetailPageContent() {
+   const params = useSearchParams(); // ✅ Suspense 내부에서 실행
    const [key, setKey] = useState<number | null>(null);
 
    useEffect(() => {
@@ -51,7 +58,6 @@ const LeisureDetailPageContent: React.FC = () => {
       };
 
       loadData();
-
       if (storedUserId) {
          // ✅ 사용자별 찜 & 다녀온 여행지 데이터 로드
          const favoritePlaces = JSON.parse(getCookie(`favorites_${storedUserId}`) || "[]");
@@ -244,6 +250,6 @@ const LeisureDetailPageContent: React.FC = () => {
          <Footer />
       </div>
    );
-};
+}
 
 export default LeisureDetailPageContent;

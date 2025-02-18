@@ -1,10 +1,10 @@
 "use client";
 
-export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+export const dynamic = "force-dynamic"; // ✅ SSR 오류 방지
 
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState, Suspense } from "react";
 
 import DetailSwiper from "@/components/common/DetailSwiper";
 import Footer from "@/components/common/Footer";
@@ -18,8 +18,17 @@ import { getCookie, setCookie } from "@/utils/cookie";
 
 const catList = catListJson as CatList;
 
+// ✅ Suspense 적용하여 useSearchParams 안전하게 사용
 export default function FestivalDetailPage() {
-   const router = useRouter();
+   return (
+      <Suspense fallback={<div>Loading...</div>}>
+         <FestivalDetailPageContent />
+      </Suspense>
+   );
+}
+
+function FestivalDetailPageContent() {
+   const searchParams = useSearchParams(); // ✅ Suspense 내부에서 실행
    const [contentId, setContentId] = useState<number | null>(null);
    const [infoList, setInfoList] = useState<TourDetailInfo>();
    const [imgList, setImgList] = useState<TourImg[]>([]);
@@ -27,13 +36,11 @@ export default function FestivalDetailPage() {
    const [isVisited, setIsVisited] = useState(false);
 
    useEffect(() => {
-      if (router.isReady) {
-         const id = Number(router.query.contentId);
-         if (!isNaN(id)) {
-            setContentId(id);
-         }
+      const id = Number(searchParams.get("contentId"));
+      if (!isNaN(id)) {
+         setContentId(id);
       }
-   }, [router.isReady, router.query]);
+   }, [searchParams]);
 
    useEffect(() => {
       if (!contentId) return;

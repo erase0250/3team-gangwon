@@ -1,11 +1,11 @@
 "use client";
 
-export const dynamic = "force-dynamic"; // ✅ 이 줄을 추가해서 SSR에서 오류 방지
+export const dynamic = "force-dynamic"; // ✅ SSR 오류 방지
 
 import { AxiosResponse } from "axios";
 import Image from "next/image";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
@@ -31,10 +31,19 @@ interface Post {
 }
 
 export default function EditPostPage() {
+   return (
+      <Suspense fallback={<div>Loading...</div>}>
+         <EditPostPageContent />
+      </Suspense>
+   );
+}
+
+function EditPostPageContent() {
    const router = useRouter();
    const { postId } = useParams();
    const searchParams = useSearchParams();
    const channelId = searchParams.get("channelId") || "679f3aba7cd28d7700f70f40";
+
    const [post, setPost] = useState<Post | null>(null);
    const [title, setTitle] = useState<string>("");
    const [content, setContent] = useState<string>("");
@@ -46,7 +55,6 @@ export default function EditPostPage() {
    const [preview, setPreview] = useState<string | null>(null);
    const [loading, setLoading] = useState<boolean>(false);
 
-   // 로그인 상태 확인
    useEffect(() => {
       const checkLogin = async () => {
          try {
@@ -61,10 +69,9 @@ export default function EditPostPage() {
          }
       };
 
-      checkLogin(); // 로그인 상태 확인 함수 호출
+      checkLogin();
    }, [router]);
 
-   // 게시글 데이터 불러오기
    useEffect(() => {
       if (!postId) return;
 
@@ -126,7 +133,6 @@ export default function EditPostPage() {
 
          const imageToDeletePublicId = null;
 
-         // 수정된 게시글 데이터를 업데이트
          const response = await updatePost(
             postId as string,
             title,
