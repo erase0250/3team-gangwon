@@ -41,6 +41,7 @@ function LeisureDetailPageContent() {
    const [isFavorite, setIsFavorite] = useState(false);
    const [isVisited, setIsVisited] = useState(false);
    const [storedUserId, setStoredUserId] = useState<string | null>(null);
+   const blankbox = <span className="text-gray-400">없음</span>;
 
    useEffect(() => {
       setStoredUserId(getCookie("userId"));
